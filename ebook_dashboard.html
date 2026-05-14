@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電子書收益追蹤 — 專業叢書統籌組</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--ink:#1a1410;--ink2:#3d3530;--ink3:#7a6e68;--paper:#faf7f2;--paper2:#f2ede4;--paper3:#e8e0d4;--rule:#d4c9bc;--gold:#b8860b;--gold2:#d4a017;--red:#8b2020;--green:#1a5c2e;--accent:#c4622d;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+.masthead{background:var(--ink);color:var(--paper);border-bottom:4px solid var(--gold);}
+.mh-inner{max-width:1400px;margin:0 auto;padding:16px 32px;display:flex;align-items:flex-end;justify-content:space-between;}
+.mh-title{font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;letter-spacing:2px;}
+.mh-title em{font-style:normal;color:var(--gold2);}
+.mh-sub{font-size:10px;color:#a09080;letter-spacing:3px;margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.mh-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#a09080;text-align:right;line-height:1.8;}
+.nav-bar{background:var(--ink2);border-bottom:1px solid #5a4a3a;}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 32px;display:flex;}
+.nb{padding:10px 16px;color:#c0b0a0;font-size:13px;cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;transition:all 0.2s;font-family:'Noto Sans TC',sans-serif;}
+.nb:hover{color:#faf7f2;}.nb.active{color:var(--gold2);border-bottom-color:var(--gold2);}
+.filter-bar{background:var(--paper2);border-bottom:1px solid var(--rule);padding:8px 32px;}
+.fb-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.fl{font-size:10px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.fb{padding:4px 10px;border:1px solid var(--rule);background:var(--paper);cursor:pointer;font-size:12px;color:var(--ink3);transition:all 0.15s;font-family:'Noto Sans TC',sans-serif;border-radius:2px;}
+.fb:hover{border-color:var(--gold);color:var(--ink2);}.fb.on{background:var(--ink);color:var(--gold2);border-color:var(--ink);}
+.fsep{width:1px;height:18px;background:var(--rule);flex-shrink:0;}
+.con{max-width:1400px;margin:0 auto;padding:22px 32px;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:22px;}
+.kpi{background:var(--paper);padding:16px 20px;position:relative;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);}
+.kl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:4px;font-family:'JetBrains Mono',monospace;}
+.kv{font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1;}
+.kv.money{color:var(--green);}.ks{font-size:11px;color:var(--ink3);margin-top:2px;}
+.card{background:var(--paper);border:1px solid var(--rule);margin-bottom:16px;}
+.ch{padding:11px 16px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;background:var(--paper2);}
+.ct{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;color:var(--ink2);}
+.cb{padding:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.bar-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bl{width:140px;font-size:12px;color:var(--ink2);text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bt{flex:1;height:16px;background:var(--paper3);border-radius:2px;overflow:hidden;}
+.bf{height:100%;border-radius:2px;transition:width 0.6s ease;}
+.bv{width:120px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);text-align:right;flex-shrink:0;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{padding:8px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);border-bottom:2px solid var(--rule);background:var(--paper2);cursor:pointer;white-space:nowrap;}
+th:hover{color:var(--accent);}
+td{padding:8px 10px;border-bottom:1px solid var(--paper3);color:var(--ink2);vertical-align:middle;}
+tr:hover td{background:var(--paper2);}
+.num{font-family:'JetBrains Mono',monospace;text-align:right;font-size:12px;}
+.tot td{background:var(--paper2);font-weight:700;border-top:2px solid var(--rule);}
+.badge{display:inline-block;padding:1px 6px;border-radius:2px;font-size:11px;font-weight:500;}
+.bg{background:#fef3c7;color:#92400e;}.bb{background:#dbeafe;color:#1e40af;}.bn{background:#d1fae5;color:#065f46;}.br{background:#fee2e2;color:#991b1b;}.bz{background:var(--paper3);color:var(--ink3);}
+.ptabs{display:flex;gap:2px;margin-bottom:14px;flex-wrap:wrap;}
+.ptab{padding:6px 14px;border:1px solid var(--rule);background:var(--paper2);cursor:pointer;font-size:12px;color:var(--ink3);transition:all 0.15s;}
+.ptab:hover{border-color:var(--gold);}.ptab.on{background:var(--ink);color:var(--gold2);border-color:var(--ink);}
+textarea{width:100%;background:var(--paper2);border:1px solid var(--rule);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:11px;padding:12px;resize:vertical;min-height:240px;outline:none;transition:border-color 0.2s;}
+textarea:focus{border-color:var(--gold);}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:1px solid;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:13px;font-weight:500;transition:all 0.15s;}
+.bi{background:var(--ink);color:var(--gold2);border-color:var(--ink);}.bi:hover{background:var(--ink2);}
+.bg2{background:transparent;color:var(--ink3);border-color:var(--rule);}.bg2:hover{border-color:var(--ink3);}
+.bd{background:transparent;color:var(--red);border-color:#d4a0a0;}.bd:hover{background:#fee2e2;}
+.msg{padding:8px 12px;font-size:12px;margin-top:10px;border-left:3px solid;display:none;}
+.msg.ok{border-color:var(--green);background:#d1fae5;color:#065f46;display:block;}
+.msg.err{border-color:var(--red);background:#fee2e2;color:#991b1b;display:block;}
+.hint{background:var(--paper2);border:1px solid var(--rule);padding:14px;font-size:12px;color:var(--ink2);line-height:2;}
+.hint code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:var(--paper3);padding:1px 4px;}
+.ht{font-weight:600;margin-bottom:6px;font-family:'Noto Serif TC',serif;}
+.page{display:none;}.page.active{display:block;}
+.empty{text-align:center;padding:40px;color:var(--ink3);}
+.sw{overflow-x:auto;max-height:520px;overflow-y:auto;}
+.sw::-webkit-scrollbar{width:5px;height:5px;}.sw::-webkit-scrollbar-thumb{background:var(--rule);}
+.igrid{display:grid;grid-template-columns:1fr 340px;gap:16px;}
+.notice{background:#fef3c7;border:1px solid #d4a017;padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:16px;border-left:3px solid #d4a017;}
+</style>
+</head>
+<body>
+
+<!-- ══ 密碼保護畫面 ══ -->
+<div id="lockScreen" style="
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:#1a1410;
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+  flex-direction:column;
+  gap:0;
+">
+  <div style="
+    background:#22201c;
+    border:1px solid #b8860b;
+    padding:48px 52px;
+    text-align:center;
+    max-width:380px;
+    width:90%;
+  ">
+    <div style="font-family:Noto Serif TC,serif;font-size:13px;color:#a09080;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px">Professional Publications Unit</div>
+    <div style="font-family:Noto Serif TC,serif;font-size:22px;font-weight:700;color:#faf7f2;letter-spacing:1px;margin-bottom:4px">電子書收益追蹤</div>
+    <div style="width:40px;height:2px;background:#b8860b;margin:16px auto 28px;"></div>
+    <div style="font-size:12px;color:#7a6e68;margin-bottom:14px;letter-spacing:0.5px">請輸入密碼以繼續</div>
+    <input id="pwInput" type="password"
+      style="
+        width:100%;background:#1a1410;border:1px solid #5a4a3a;
+        color:#faf7f2;font-family:JetBrains Mono,monospace;font-size:15px;
+        padding:12px 16px;text-align:center;outline:none;letter-spacing:4px;
+        margin-bottom:10px;
+      "
+      placeholder="••••••••"
+      onkeydown="if(event.key==='Enter')checkPw()"
+    >
+    <div id="pwError" style="font-size:11px;color:#8b2020;margin-bottom:10px;min-height:16px;"></div>
+    <button onclick="checkPw()" style="
+      width:100%;background:#b8860b;color:#1a1410;border:none;
+      padding:12px;font-family:Noto Sans TC,sans-serif;font-size:14px;
+      font-weight:700;cursor:pointer;letter-spacing:1px;
+      transition:background 0.2s;
+    "
+    onmouseover="this.style.background='#d4a017'"
+    onmouseout="this.style.background='#b8860b'"
+    >進入</button>
+  </div>
+  <div style="margin-top:20px;font-size:10px;color:#5a4a3a;letter-spacing:2px">HKFYG · CONFIDENTIAL</div>
+</div>
+
+<div id="mainContent" style="display:none">
+<div class="masthead">
+  <div class="mh-inner">
+    <div>
+      <div class="mh-title">專業叢書統籌組 <em>電子書收益追蹤</em></div>
+      <div class="mh-sub">Professional Publications Unit · Ebook Revenue Dashboard</div>
+    </div>
+    <div class="mh-meta" id="metaInfo">尚未載入數據</div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-inner">
+    <button class="nb active" onclick="nav(this,'overview')">📊 總覽</button>
+    <button class="nb" onclick="nav(this,'books')">📚 書籍收益</button>
+    <button class="nb" onclick="nav(this,'platforms')">🏪 平台分析</button>
+    <button class="nb" onclick="nav(this,'categories')">🏷 類別分析</button>
+    <button class="nb" onclick="nav(this,'trend')">📈 趨勢</button>
+    <button class="nb" onclick="nav(this,'import')">📥 導入數據</button>
+    <button class="nb" onclick="nav(this,'raw')">🗂 原始數據</button>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="fb-inner">
+    <span class="fl">年份</span><div id="fyear"></div>
+    <div class="fsep"></div>
+    <span class="fl">月份</span><div id="fmonth"></div>
+    <div class="fsep"></div>
+    <span class="fl">季度</span><div id="fquarter"></div>
+    <div class="fsep"></div>
+    <span class="fl">平台</span><div id="fplatform"></div>
+  </div>
+</div>
+
+<div class="con">
+
+<div id="p-overview" class="page active">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kl">篩選後收益</div><div class="kv money" id="kT">—</div><div class="ks">港元 HKD</div></div>
+    <div class="kpi"><div class="kl">平台數量</div><div class="kv" id="kP">—</div><div class="ks">個平台</div></div>
+    <div class="kpi"><div class="kl">書籍數量</div><div class="kv" id="kB">—</div><div class="ks">本書籍</div></div>
+    <div class="kpi"><div class="kl">收益記錄</div><div class="kv" id="kR">—</div><div class="ks">筆記錄</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ch"><span class="ct">各平台累計收益</span></div><div class="cb" id="ovP"></div></div>
+    <div class="card"><div class="ch"><span class="ct">書籍類別收益佔比</span></div><div class="cb" id="ovC"></div></div>
+  </div>
+  <div class="card"><div class="ch"><span class="ct">書籍收益 Top 10</span></div><div class="cb" id="ovB"></div></div>
+</div>
+
+<div id="p-books" class="page">
+  <div class="card">
+    <div class="ch"><span class="ct">各書籍收益明細</span>
+      <input style="border:1px solid var(--rule);padding:5px 10px;font-size:12px;background:var(--paper);color:var(--ink);width:180px;font-family:inherit;outline:none;" placeholder="搜尋書名…" oninput="filt('bkTbl',this.value)">
+    </div>
+    <div style="padding:0"><div class="sw"><table id="bkTbl"><thead></thead><tbody></tbody></table></div></div>
+  </div>
+</div>
+
+<div id="p-platforms" class="page">
+  <div class="ptabs" id="ptabs"></div>
+  <div id="pdet"></div>
+</div>
+
+<div id="p-categories" class="page">
+  <div class="g2">
+    <div class="card"><div class="ch"><span class="ct">類別收益佔比</span></div><div class="cb" id="catBar"></div></div>
+    <div class="card"><div class="ch"><span class="ct">類別 × 平台</span></div><div style="padding:0"><div class="sw"><table id="catTbl"><thead></thead><tbody></tbody></table></div></div></div>
+  </div>
+</div>
+
+<div id="p-trend" class="page">
+  <div class="card"><div class="ch"><span class="ct">月度收益趨勢</span></div><div class="cb"><div id="tChart" style="overflow-x:auto"></div></div></div>
+  <div class="card"><div class="ch"><span class="ct">季度收益</span></div><div class="cb" id="qBar"></div></div>
+</div>
+
+<div id="p-import" class="page">
+  
+  <div class="card">
+    <div class="ch"><span class="ct">導入 / 管理數據</span></div>
+    <div class="cb">
+      <div class="igrid">
+        <div>
+          <div style="background:#fef3c7;border-left:3px solid var(--gold);padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e">
+  <strong>💡 更新 HTML 前必做：</strong>點「📤 匯出數據備份」儲存 JSON 檔案 → 換新 HTML → 點「📂 載入數據備份」恢復數據。只需30秒，數據永不丟失。
+</div>
+<p style="color:var(--ink3);margin-bottom:12px;font-size:13px">將 Claude 解析好的 JSON 貼入，按「導入」即可更新所有圖表。</p>
+          <textarea id="jsonIn" placeholder="貼入 Claude 輸出的 JSON…"></textarea>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bi" onclick="doImport()">📥 導入數據</button>
+            <button class="btn bg2" onclick="document.getElementById('jsonIn').value=''">清空輸入框</button>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn bi" onclick="doExport()" style="background:var(--green);border-color:var(--green)">📤 匯出數據備份</button>
+            <button class="btn bg2" onclick="document.getElementById('loadFile').click()">📂 載入數據備份</button>
+            <input type="file" id="loadFile" accept=".json" style="display:none" onchange="doLoadFile(this)">
+            <button class="btn bd" onclick="doClear()">🗑 清除所有數據</button>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink3)">
+            現有數據：<span id="dbCount">0</span> 筆　最後更新：<span id="dbDate">—</span>
+          </div>
+          <div id="importMsg" class="msg"></div>
+        </div>
+        <div class="hint">
+          <div class="ht">JSON 欄位說明</div>
+          <div><code>income_period</code> 收益期間（如 2026-03）</div>
+          <div><code>report_date</code> 報告日期（YYYY-MM-DD）</div>
+          <div><code>platform</code> 平台名稱</div>
+          <div><code>isbn</code> ISBN</div>
+          <div><code>title</code> 書名</div>
+          <div><code>amount_hkd</code> 港元金額</div>
+          <div><code>original_amount</code> 原幣金額</div>
+          <div><code>original_currency</code> HKD / USD 等</div>
+          <div><code>exchange_rate</code> 匯率（USD 預設 7.8）</div>
+          <div><code>notes</code> 備註</div>
+          <hr style="border:none;border-top:1px solid var(--rule);margin:10px 0">
+          <div class="ht">使用流程</div>
+          <div>① 上傳報告給 Claude</div>
+          <div>② Claude 輸出 JSON</div>
+          <div>③ 貼入 → 導入 ✓</div>
+          <div>④ 數據自動儲存，刷新不丟失</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="p-raw" class="page">
+  <div class="card">
+    <div class="ch">
+      <span class="ct">原始數據（共 <span id="rawCnt">0</span> 筆）</span>
+      <input style="border:1px solid var(--rule);padding:5px 10px;font-size:12px;background:var(--paper);color:var(--ink);width:180px;font-family:inherit;outline:none;" placeholder="搜尋…" oninput="filt('rawTbl',this.value)">
+    </div>
+    <div style="padding:0"><div class="sw"><table id="rawTbl">
+      <thead><tr><th>期間</th><th>報告日期</th><th>平台</th><th>ISBN</th><th>書名</th><th>類別</th><th style="text-align:right">金額HKD</th><th style="text-align:right">原幣</th><th>幣別</th><th>備註</th></tr></thead>
+      <tbody id="rawBody"></tbody>
+    </table></div></div>
+  </div>
+</div>
+
+</div><!-- /con -->
+
+<script>
+// ══ 數據存於此全域變數（頁面生命週期內持久）══
+var LS_KEY = 'hkfyg_ppu_data';
+
+// 儲存：同時寫入 localStorage（備用）
+function lsSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); } catch(e) {}
+}
+
+// 讀取：優先從 localStorage，找不到返回空陣列
+function lsLoad() {
+  try { var d = localStorage.getItem(LS_KEY); return d ? JSON.parse(d) : []; } catch(e) { return []; }
+}
+
+var DB = lsLoad();
+
+// 協會財政年度季度：Q1=4-6月, Q2=7-9月, Q3=10-12月, Q4=1-3月
+function getFiscalQuarter(yr, mo) {
+  if (!yr || !mo) return '';
+  // Q4 橫跨年份：1-3月屬於上一財政年度的 Q4
+  if (mo >= 1 && mo <= 3)  return (parseInt(yr)-1) + '-' + yr + ' Q4';
+  if (mo >= 4 && mo <= 6)  return yr + ' Q1';
+  if (mo >= 7 && mo <= 9)  return yr + ' Q2';
+  if (mo >= 10 && mo <= 12) return yr + ' Q3';
+  return yr + ' Q?';
+}
+
+// 篩選器用的季度標籤
+function getQuarterLabel(mo) {
+  if (mo >= 1 && mo <= 3)  return 'Q4（1-3月）';
+  if (mo >= 4 && mo <= 6)  return 'Q1（4-6月）';
+  if (mo >= 7 && mo <= 9)  return 'Q2（7-9月）';
+  if (mo >= 10 && mo <= 12) return 'Q3（10-12月）';
+  return '';
+}
+
+var BCAT = {'9789887628019':'文青讀物','9789887995104':'青年輔導','9789887995142':'青年輔導','9789887627920':'文青讀物','9789887995272':'文青讀物','9789887628026':'文青讀物','9789887713401':'青年輔導','9789887995197':'專業進修','9789887628040':'青年輔導','9789887628002':'文青讀物','9789887628033':'專業進修','9789887628095':'文青讀物','9789887628163':'青年作家','9789887628156':'青年作家','9789887628125':'文青讀物','9789887628132':'青年輔導','9789887628187':'專業進修','9789887713487':'就業創業','9789887995005':'文青讀物','9789887995029':'文青讀物','9789887995036':'專業進修','9789887995043':'父母必睇','9789887995050':'義工系列','9789887995067':'父母必睇','9789887995159':'青年輔導','9789887995081':'就業創業','9789887995128':'義工系列','9789887995135':'溫情故事','9789887995180':'青年輔導','9789887995111':'文青讀物','9789887627968':'青年輔導','9789887627913':'文青讀物','9789887628088':'就業創業','9789887628064':'青年輔導','9789887628057':'溫情故事'};
+var COLS = ['#b8860b','#1a5c2e','#1a3a5c','#8b2020','#1a5c5c','#6b4c2a','#4a1a6b','#2a4a1a','#6b2a4a','#1a4a6b','#5c3a1a','#3a5c1a'];
+var CBG = {'文青讀物':'bg','青年輔導':'bb','專業進修':'bn','義工系列':'bn','就業創業':'bn','父母必睇':'br','溫情故事':'br','青年作家':'bg','校園作家':'bg','其他':'bz'};
+
+// ── 篩選狀態 ──
+var FS = {y:new Set(['all']), m:new Set(['all']), q:new Set(['all']), p:new Set(['all'])};
+
+function filtered() {
+  return DB.filter(function(r) {
+    var per = String(r.period||'');
+    var yr = per.slice(0,4), mo = per.slice(5,7), moInt = parseInt(mo)||0;
+    var fq = moInt ? getFiscalQuarter(yr, moInt) : '';
+    return (FS.y.has('all')||FS.y.has(yr)) &&
+           (FS.m.has('all')||FS.m.has(mo)) &&
+           (FS.q.has('all')||FS.q.has(fq)) &&
+           (FS.p.has('all')||FS.p.has(r.platform));
+  });
+}
+
+// ── 格式化 ──
+function hkd(n) {
+  n = Math.round(n*100)/100;
+  return 'HK$'+n.toLocaleString('zh-HK',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function pct(n,t){return t>0?(n/t*100).toFixed(1)+'%':'0%';}
+
+// ── 聚合 ──
+function agg(rows) {
+  var P={},B={},C={},M={},Q={};
+  rows.forEach(function(r) {
+    var p=r.platform, t=r.title, c=r.category||'其他', a=r.amount_hkd;
+    var per=String(r.period||''), yr=per.slice(0,4), mo=parseInt(per.slice(5,7))||0;
+    var mon = yr&&mo ? yr+'-'+(mo<10?'0'+mo:mo) : per;
+    var q   = yr&&mo ? getFiscalQuarter(yr, mo) : per;
+    P[p]=(P[p]||0)+a;
+    if(!B[t])B[t]={isbn:r.isbn,cat:c,total:0,by:{}};
+    B[t].total+=a; B[t].by[p]=(B[t].by[p]||0)+a;
+    if(!C[c])C[c]={total:0,by:{}};
+    C[c].total+=a; C[c].by[p]=(C[c].by[p]||0)+a;
+    M[mon]=(M[mon]||0)+a;
+    Q[q]=(Q[q]||0)+a;
+  });
+  return {P:P,B:B,C:C,M:M,Q:Q};
+}
+
+// ── 長條圖 ──
+function bars(items, maxV, vFn) {
+  if(!items.length) return '<div class="empty">無數據</div>';
+  return items.map(function(it,i){
+    var p = maxV>0 ? it.val/maxV*100 : 0;
+    return '<div class="bar-item">'+
+      '<div class="bl" title="'+it.label+'">'+it.label+'</div>'+
+      '<div class="bt"><div class="bf" style="width:'+p+'%;background:'+COLS[i%COLS.length]+'"></div></div>'+
+      '<div class="bv">'+(vFn?vFn(it):hkd(it.val))+'</div></div>';
+  }).join('');
+}
+function empty(msg){return '<div class="empty">'+(msg||'套用篩選後無數據')+'</div>';}
+
+// ── 篩選按鈕建立 ──
+function buildFilters() {
+  var years=new Set(), months=new Set(), platforms=new Set();
+  DB.forEach(function(r){
+    var per=String(r.period||''), yr=per.slice(0,4), mo=per.slice(5,7);
+    if(yr) years.add(yr);
+    if(mo) months.add(mo);
+    if(r.platform) platforms.add(r.platform);
+  });
+
+  var MN=['','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+  function mkBtns(el, set, group, labelFn) {
+    var html='<button class="fb on" data-v="all" onclick="tf(this,\''+group+'\',\'all\')">全部</button>';
+    var arr = Array.isArray(set) ? set : Array.from(set).sort();
+    arr.forEach(function(v){
+      html+='<button class="fb" data-v="'+v+'" onclick="tf(this,\''+group+'\',\''+v+'\')">'+(labelFn?labelFn(v):v)+'</button>';
+    });
+    document.getElementById(el).innerHTML=html;
+  }
+
+  // 從月份集合推導出所有季度
+  var quarters = new Set();
+  DB.forEach(function(r){
+    var per=String(r.period||''), yr=per.slice(0,4), mo=parseInt(per.slice(5,7))||0;
+    if(yr&&mo) quarters.add(getFiscalQuarter(yr,mo));
+  });
+
+  mkBtns('fyear', years, 'y');
+  mkBtns('fmonth', months, 'm', function(v){return MN[parseInt(v)]||v;});
+  mkBtns('fquarter', Array.from(quarters).sort(), 'q');
+  mkBtns('fplatform', platforms, 'p');
+}
+
+function tf(btn, group, val) {
+  var s = FS[group];
+  var elMap = {y:'fyear', m:'fmonth', q:'fquarter', p:'fplatform'};
+  var btns = btn.parentElement.querySelectorAll('.fb');
+  if(val==='all'){
+    s.clear(); s.add('all');
+    btns.forEach(function(b){b.classList.toggle('on', b.dataset.v==='all');});
+  } else {
+    s.delete('all');
+    document.getElementById(group==='y'?'fyear':group==='m'?'fmonth':'fplatform').querySelector('[data-v="all"]').classList.remove('on');
+    if(s.has(val)){s.delete(val);btn.classList.remove('on');}
+    else{s.add(val);btn.classList.add('on');}
+    if(s.size===0){s.add('all');btn.parentElement.querySelector('[data-v="all"]').classList.add('on');}
+  }
+  renderAll();
+}
+
+// ══ 渲染所有頁面 ══
+function renderAll() {
+  var rows = filtered();
+  var A = agg(rows);
+  var total = Object.values(A.P).reduce(function(s,v){return s+v;},0);
+  var pList = Object.keys(A.P).sort(function(a,b){return A.P[b]-A.P[a];});
+
+  // Meta
+  document.getElementById('metaInfo').innerHTML =
+    '共 '+DB.length+' 筆 / 顯示 '+rows.length+' 筆<br>'+
+    new Date().toLocaleDateString('zh-HK')+'更新';
+
+  // KPI
+  document.getElementById('kT').textContent = hkd(total);
+  document.getElementById('kP').textContent = pList.length;
+  document.getElementById('kB').textContent = Object.keys(A.B).length;
+  document.getElementById('kR').textContent = rows.length;
+
+  // Overview
+  var pItems = pList.map(function(p){return{label:p,val:A.P[p]};});
+  document.getElementById('ovP').innerHTML = pItems.length ?
+    bars(pItems, pItems[0].val, function(it){return hkd(it.val)+' ('+pct(it.val,total)+')';}) : empty();
+
+  var cList = Object.keys(A.C).sort(function(a,b){return A.C[b].total-A.C[a].total;});
+  var cItems = cList.map(function(c){return{label:c,val:A.C[c].total};});
+  document.getElementById('ovC').innerHTML = cItems.length ?
+    bars(cItems, cItems[0].val, function(it){return hkd(it.val)+' ('+pct(it.val,total)+')';}) : empty();
+
+  var bTop = Object.keys(A.B).sort(function(a,b){return A.B[b].total-A.B[a].total;}).slice(0,10);
+  var bItems = bTop.map(function(t){return{label:t,val:A.B[t].total};});
+  document.getElementById('ovB').innerHTML = bItems.length ? bars(bItems, bItems[0].val) : empty();
+
+  // Books table
+  rBooks(A, pList);
+
+  // Platforms
+  rPlatforms(rows, A, pList);
+
+  // Categories
+  rCats(A, pList, total);
+
+  // Trend
+  rTrend(A);
+
+  // Raw
+  rRaw(rows);
+}
+
+function rBooks(A, pList) {
+  var head = '<tr><th onclick="sortT(\'bkTbl\',0)">書名</th><th>類別</th>'+
+    pList.map(function(p,i){return '<th onclick="sortT(\'bkTbl\','+(i+2)+')" style="text-align:right">'+p+'</th>';}).join('')+
+    '<th onclick="sortT(\'bkTbl\','+(pList.length+2)+')" style="text-align:right">總計</th><th>最高平台</th></tr>';
+  var bList = Object.keys(A.B).sort(function(a,b){return A.B[b].total-A.B[a].total;});
+  var body = bList.map(function(t){
+    var b=A.B[t], amts=pList.map(function(p){return b.by[p]||0;});
+    var maxP=pList[amts.indexOf(Math.max.apply(null,amts))];
+    return '<tr><td>'+t+'</td><td><span class="badge '+(CBG[b.cat]||'bz')+'">'+b.cat+'</span></td>'+
+      amts.map(function(a){return '<td class="num">'+(a>0?hkd(a):'—')+'</td>';}).join('')+
+      '<td class="num" style="color:var(--green);font-weight:600">'+hkd(b.total)+'</td>'+
+      '<td><span class="badge bg">'+(maxP||'—')+'</span></td></tr>';
+  }).join('');
+  var tAmts=pList.map(function(p){return Object.values(A.B).reduce(function(s,b){return s+(b.by[p]||0);},0);});
+  var foot='<tr class="tot"><td>合計</td><td></td>'+tAmts.map(function(a){return '<td class="num">'+hkd(a)+'</td>';}).join('')+
+    '<td class="num">'+hkd(Object.values(A.B).reduce(function(s,b){return s+b.total;},0))+'</td><td></td></tr>';
+  var t=document.getElementById('bkTbl');
+  t.querySelector('thead').innerHTML=head;
+  t.querySelector('tbody').innerHTML=body+foot;
+}
+
+function rPlatforms(rows, A, pList) {
+  if(!pList.length){document.getElementById('ptabs').innerHTML='';document.getElementById('pdet').innerHTML=empty('無平台數據');return;}
+  var cur = document.querySelector('.ptab.on');
+  var curP = cur ? cur.dataset.p : pList[0];
+  if(pList.indexOf(curP)<0) curP=pList[0];
+  document.getElementById('ptabs').innerHTML = pList.map(function(p){
+    return '<div class="ptab'+(p===curP?' on':'')+'" data-p="'+p+'" onclick="swPTab(this)">'+p+'</div>';
+  }).join('');
+  rPD(rows, A, curP);
+}
+
+function swPTab(el){
+  document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+  rPD(filtered(), agg(filtered()), el.dataset.p);
+}
+
+function rPD(rows, A, platform) {
+  var pRows = rows.filter(function(r){return r.platform===platform;});
+  var grand = A.P[platform]||0;
+
+  var mMap={};
+  pRows.forEach(function(r){var m=String(r.period||'').slice(0,7);mMap[m]=(mMap[m]||0)+r.amount_hkd;});
+  var cum=0;
+  var mTbl='<table><thead><tr><th>月份</th><th style="text-align:right">金額(HKD)</th><th style="text-align:right">累計</th></tr></thead><tbody>'+
+    Object.keys(mMap).sort().map(function(m){cum+=mMap[m];return '<tr><td>'+m+'</td><td class="num">'+hkd(mMap[m])+'</td><td class="num" style="color:var(--ink3)">'+hkd(cum)+'</td></tr>';}).join('')+
+    '</tbody></table>';
+
+  var qMap={};
+  pRows.forEach(function(r){var p=String(r.period||''),yr=p.slice(0,4),mo=parseInt(p.slice(5,7))||0;var q=yr&&mo?getFiscalQuarter(yr,mo):p;qMap[q]=(qMap[q]||0)+r.amount_hkd;});
+  var qItems=Object.keys(qMap).sort().map(function(q){return{label:q,val:qMap[q]};});
+
+  var bkMap={};
+  pRows.forEach(function(r){bkMap[r.title]=(bkMap[r.title]||0)+r.amount_hkd;});
+  var bkItems=Object.keys(bkMap).sort(function(a,b){return bkMap[b]-bkMap[a];}).map(function(t){return{label:t,val:bkMap[t]};});
+
+  var catMap={};
+  pRows.forEach(function(r){catMap[r.category]=(catMap[r.category]||0)+r.amount_hkd;});
+  var catItems=Object.keys(catMap).sort(function(a,b){return catMap[b]-catMap[a];}).map(function(c){return{label:c,val:catMap[c]};});
+
+  function km(label,val){return '<div style="background:var(--paper);padding:12px 16px"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);margin-bottom:3px;font-family:JetBrains Mono,monospace">'+label+'</div><div style="font-family:Noto Serif TC,serif;font-size:20px;font-weight:700">'+val+'</div></div>';}
+
+  document.getElementById('pdet').innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:16px">'+
+    km('累計總收益',hkd(grand))+km('書籍數量',Object.keys(bkMap).length+' 本')+km('記錄筆數',pRows.length+' 筆')+
+    '</div>'+
+    '<div class="g2" style="margin-bottom:16px">'+
+    '<div class="card"><div class="ch"><span class="ct">📅 月度收益</span></div><div style="padding:0"><div class="sw">'+mTbl+'</div></div></div>'+
+    '<div class="card"><div class="ch"><span class="ct">📆 季度收益</span></div><div class="cb">'+bars(qItems,qItems.reduce(function(m,x){return x.val>m?x.val:m;},0))+'</div></div>'+
+    '</div>'+
+    '<div class="card" style="margin-bottom:16px"><div class="ch"><span class="ct">📚 各書收益排行</span></div><div class="cb">'+bars(bkItems,bkItems[0]?bkItems[0].val:1)+'</div></div>'+
+    '<div class="card"><div class="ch"><span class="ct">🏷 類別佔比</span></div><div class="cb">'+bars(catItems,catItems[0]?catItems[0].val:1,function(it){return hkd(it.val)+' ('+pct(it.val,grand)+')';})+'</div></div>';
+}
+
+function rCats(A, pList, total) {
+  var cList=Object.keys(A.C).sort(function(a,b){return A.C[b].total-A.C[a].total;});
+  if(!cList.length){document.getElementById('catBar').innerHTML=empty();return;}
+  var cItems=cList.map(function(c){return{label:c,val:A.C[c].total};});
+  document.getElementById('catBar').innerHTML=bars(cItems,cItems[0].val,function(it){return hkd(it.val)+' ('+pct(it.val,total)+')';});
+  var head='<tr><th>類別</th>'+pList.map(function(p){return '<th style="text-align:right">'+p+'</th>';}).join('')+'<th style="text-align:right">總計</th><th style="text-align:right">佔比</th></tr>';
+  var body=cList.map(function(c){
+    var amts=pList.map(function(p){return A.C[c].by[p]||0;});
+    return '<tr><td><span class="badge '+(CBG[c]||'bz')+'">'+c+'</span></td>'+amts.map(function(a){return '<td class="num">'+(a>0?hkd(a):'—')+'</td>';}).join('')+'<td class="num" style="font-weight:600">'+hkd(A.C[c].total)+'</td><td class="num" style="color:var(--accent)">'+pct(A.C[c].total,total)+'</td></tr>';
+  }).join('');
+  var t=document.getElementById('catTbl');
+  t.querySelector('thead').innerHTML=head;
+  t.querySelector('tbody').innerHTML=body;
+}
+
+function rTrend(A) {
+  var mKeys=Object.keys(A.M).sort();
+  if(!mKeys.length){document.getElementById('tChart').innerHTML=empty();document.getElementById('qBar').innerHTML='';return;}
+  var mMax=mKeys.reduce(function(m,k){return A.M[k]>m?A.M[k]:m;},0);
+  var cw=Math.max(42,Math.floor(880/mKeys.length));
+  var html='<div style="display:flex;align-items:flex-end;gap:3px;height:180px;padding:0 4px;min-width:'+(mKeys.length*(cw+3))+'px">';
+  mKeys.forEach(function(m,i){
+    var h=mMax>0?Math.round(A.M[m]/mMax*150):2;
+    html+='<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;width:'+cw+'px">'+
+      '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink3);text-align:center">'+hkd(A.M[m]).replace('HK$','')+'</div>'+
+      '<div title="'+m+': '+hkd(A.M[m])+'" style="width:100%;height:'+h+'px;background:'+COLS[i%COLS.length]+';border-radius:2px 2px 0 0;cursor:pointer" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1"></div>'+
+      '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink3);text-align:center;white-space:nowrap">'+m.slice(2)+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('tChart').innerHTML=html;
+  var qItems=Object.keys(A.Q).sort().map(function(q){return{label:q,val:A.Q[q]};});
+  document.getElementById('qBar').innerHTML=bars(qItems,qItems.reduce(function(m,x){return x.val>m?x.val:m;},0));
+}
+
+function rRaw(rows) {
+  document.getElementById('rawCnt').textContent=rows.length;
+  document.getElementById('rawBody').innerHTML=rows.slice().reverse().map(function(r){
+    return '<tr><td style="font-family:JetBrains Mono,monospace;font-size:11px">'+r.period+'</td>'+
+      '<td style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--ink3)">'+r.report_date+'</td>'+
+      '<td><span class="badge bb">'+r.platform+'</span></td>'+
+      '<td style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--ink3)">'+r.isbn+'</td>'+
+      '<td>'+r.title+'</td>'+
+      '<td><span class="badge '+(CBG[r.category]||'bz')+'">'+r.category+'</span></td>'+
+      '<td class="num" style="color:var(--green);font-weight:600">'+hkd(r.amount_hkd)+'</td>'+
+      '<td class="num" style="color:var(--ink3)">'+r.original_amount+'</td>'+
+      '<td><span class="badge bz">'+r.currency+'</span></td>'+
+      '<td style="font-size:11px;color:var(--ink3)">'+r.notes+'</td></tr>';
+  }).join('');
+}
+
+// ── 排序 ──
+var SS={};
+function sortT(id,col){
+  var t=document.getElementById(id);
+  var rows=Array.from(t.querySelectorAll('tbody tr')).filter(function(r){return !r.classList.contains('tot');});
+  var dir=(SS[id+col]==='asc')?'desc':'asc';
+  SS[id+col]=dir;
+  rows.sort(function(a,b){
+    var av=a.cells[col]?a.cells[col].textContent.replace(/[HK$,\s]/g,'').trim():'';
+    var bv=b.cells[col]?b.cells[col].textContent.replace(/[HK$,\s]/g,'').trim():'';
+    var an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return dir==='asc'?an-bn:bn-an;
+    return dir==='asc'?av.localeCompare(bv,'zh-HK'):bv.localeCompare(av,'zh-HK');
+  });
+  var tb=t.querySelector('tbody'),tot=tb.querySelector('.tot');
+  rows.forEach(function(r){tb.appendChild(r);});
+  if(tot)tb.appendChild(tot);
+}
+
+function filt(id,q){
+  q=q.toLowerCase();
+  document.querySelectorAll('#'+id+' tbody tr').forEach(function(r){
+    if(r.classList.contains('tot'))return;
+    r.style.display=(!q||r.textContent.toLowerCase().includes(q))?'':'none';
+  });
+}
+
+// ── 導入 ──
+function parseRow(r){
+  var isbn=String(r.isbn||'').trim();
+  var cur=(r.original_currency||'HKD').toUpperCase();
+  var amt=parseFloat(r.amount_hkd)||0;
+  var rate=parseFloat(r.exchange_rate)||1;
+  if(amt===0){rate=cur==='USD'?7.8:rate;amt=Math.round(parseFloat(r.original_amount||0)*rate*100)/100;}
+  return {period:r.income_period||'',report_date:r.report_date||'',platform:r.platform||'',isbn:isbn,title:r.title||'',category:BCAT[isbn]||r.category||'其他',amount_hkd:amt,original_amount:parseFloat(r.original_amount)||amt,currency:cur,exchange_rate:rate,notes:r.notes||''};
+}
+
+function doImport(){
+  var raw=document.getElementById('jsonIn').value.trim();
+  var msg=document.getElementById('importMsg');
+  try{
+    raw=raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
+    var recs=JSON.parse(raw);
+    if(!Array.isArray(recs))recs=[recs];
+    recs.forEach(function(r){DB.push(parseRow(r));});
+    lsSave();
+    document.getElementById('jsonIn').value='';
+    msg.className='msg ok';
+    msg.textContent='✅ 成功導入 '+recs.length+' 筆！現共 '+DB.length+' 筆，數據已自動儲存。';
+    updateDbInfo();
+    buildFilters();
+    renderAll();
+  }catch(e){msg.className='msg err';msg.textContent='❌ JSON 格式錯誤：'+e.message;}
+}
+
+function doExport(){
+  var b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='ppu_ebook_data_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+
+function doLoadFile(input){
+  var file=input.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!Array.isArray(data))throw new Error('格式不正確');
+      DB=data; lsSave();
+      var msg=document.getElementById('importMsg');
+      msg.className='msg ok';
+      msg.textContent='✅ 成功載入備份，共 '+DB.length+' 筆記錄，數據已儲存。';
+      updateDbInfo(); buildFilters(); renderAll();
+    }catch(err){
+      var msg=document.getElementById('importMsg');
+      msg.className='msg err';msg.textContent='❌ 載入失敗：'+err.message;
+    }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+function updateDbInfo(){
+  var el=document.getElementById('dbCount');
+  var el2=document.getElementById('dbDate');
+  if(el) el.textContent=DB.length;
+  if(el2) el2.textContent=DB.length>0?new Date().toLocaleDateString('zh-HK'):'—';
+}
+
+function doLoadBackup(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!Array.isArray(data))throw new Error('格式不正確');
+      DB=data; lsSave();
+      var msg=document.getElementById('importMsg');
+      msg.className='msg ok';msg.textContent='✅ 成功載入備份，共 '+DB.length+' 筆記錄，數據已自動儲存。';
+      buildFilters();renderAll();
+    }catch(err){
+      var msg=document.getElementById('importMsg');
+      msg.className='msg err';msg.textContent='❌ 載入失敗：'+err.message;
+    }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+function doClear(){
+  if(!confirm('確定要清除所有數據？'))return;
+  DB=[]; lsSave(); FS={y:new Set(['all']),m:new Set(['all']),q:new Set(['all']),p:new Set(['all'])};
+  updateDbInfo(); buildFilters(); renderAll();
+}
+
+// ── 導航 ──
+function nav(btn,page){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('p-'+page).classList.add('active');
+  btn.classList.add('active');
+}
+
+
+// ── 密碼保護 ──
+// 如需更改密碼，請修改下方 CORRECT_PW 的值
+var CORRECT_PW = 'ppu2025';
+var PW_KEY = 'hkfyg_ppu_auth';
+
+function checkPw() {
+  var input = document.getElementById('pwInput').value;
+  if (input === CORRECT_PW) {
+    // 記住已驗證（sessionStorage：關閉瀏覽器後需重新輸入）
+    sessionStorage.setItem(PW_KEY, '1');
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    updateDbInfo(); buildFilters(); renderAll();
+  } else {
+    var err = document.getElementById('pwError');
+    err.textContent = '密碼錯誤，請再試一次';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+    setTimeout(function(){ err.textContent = ''; }, 3000);
+  }
+}
+
+// 檢查是否已驗證
+if (sessionStorage.getItem(PW_KEY) === '1') {
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'block';
+  updateDbInfo(); buildFilters(); renderAll();
+} else {
+  // 未驗證：聚焦輸入框
+  setTimeout(function(){ document.getElementById('pwInput').focus(); }, 100);
+}
+</script>
+</div><!-- /mainContent -->
+</body>
+</html>
